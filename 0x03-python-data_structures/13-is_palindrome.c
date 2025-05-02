@@ -1,65 +1,61 @@
+#include <stdlib.h>
 #include "lists.h"
 
 /**
- * reverse_list - Reverses a singly linked list.
- * @head: Pointer to the head node of the list to reverse.
+ * is_palindrome - checks if a singly linked list is a palindrome
+ * @head: double pointer to the head of the list
  *
- * Return: New head of the reversed list.
- */
-static listint_t *reverse_list(listint_t *head)
-{
-    listint_t *prev = NULL, *next = NULL;
-
-    while (head)
-    {
-        next = head->next;
-        head->next = prev;
-        prev = head;
-        head = next;
-    }
-    return (prev);
-}
-
-/**
- * is_palindrome - Checks if a singly linked list is a palindrome.
- * @head: Double pointer to the head of the linked list.
- *
- * Return: 1 if the list is a palindrome, 0 otherwise.
+ * Return: 1 if it's a palindrome, 0 otherwise
  */
 int is_palindrome(listint_t **head)
 {
-    listint_t *slow, *fast, *second_half, *first_half;
-    int result = 1;
+    int *values;
+    int i, len;
+    listint_t *current;
 
-    if (head == NULL || *head == NULL || (*head)->next == NULL)
+    if (head == NULL || *head == NULL)
         return (1);
 
-    slow = fast = *head;
-    /* Find midpoint (slow will point to middle) */
-    while (fast->next && fast->next->next)
+    len = listint_len(*head);
+    values = malloc(sizeof(int) * len);
+    if (values == NULL)
+        return (0);
+
+    current = *head;
+    for (i = 0; i < len; i++)
     {
-        slow = slow->next;
-        fast = fast->next->next;
+        values[i] = current->n;
+        current = current->next;
     }
 
-    /* Reverse second half */
-    second_half = reverse_list(slow->next);
-    first_half = *head;
-
-    /* Compare both halves */
-    while (second_half)
+    for (i = 0; i < len / 2; i++)
     {
-        if (first_half->n != second_half->n)
+        if (values[i] != values[len - 1 - i])
         {
-            result = 0;
-            break;
+            free(values);
+            return (0);
         }
-        first_half = first_half->next;
-        second_half = second_half->next;
     }
 
-    /* Restore original list structure */
-    slow->next = reverse_list(reverse_list(slow->next));
+    free(values);
+    return (1);
+}
 
-    return (result);
+/**
+ * listint_len - counts the number of elements in a linked list
+ * @h: head of the list
+ *
+ * Return: number of elements
+ */
+size_t listint_len(const listint_t *h)
+{
+    int length = 0;
+
+    while (h != NULL)
+    {
+        length++;
+        h = h->next;
+    }
+
+    return (length);
 }
