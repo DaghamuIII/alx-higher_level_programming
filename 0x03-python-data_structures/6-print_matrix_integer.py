@@ -1,10 +1,10 @@
 #!/usr/bin/python3
-
 def print_matrix_integer(matrix=[[]]):
     for row in matrix:
-       for column in row:
-            if column == row[-1]:
-               print('{:d}'.format(column), end='')
+        for index, value in enumerate(row):
+            # use str.format() and no trailing space on last item
+            if index != len(row) - 1:
+                print("{:d}".format(value), end=" ")
             else:
-               print('{:d}'.format(column), end=' ')
+                print("{:d}".format(value), end="")
         print()
