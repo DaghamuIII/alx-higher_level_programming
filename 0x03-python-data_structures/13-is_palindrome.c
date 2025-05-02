@@ -1,25 +1,5 @@
+#include <stdlib.h>
 #include "lists.h"
-
-/**
- * reverse_list - Reverses a linked list
- * @head: Pointer to the first node of the list
- *
- * Return: New head of the reversed list
- */
-listint_t *reverse_list(listint_t *head)
-{
-    listint_t *prev = NULL, *next = NULL;
-
-    while (head)
-    {
-        next = head->next;
-        head->next = prev;
-        prev = head;
-        head = next;
-    }
-
-    return (prev);
-}
 
 /**
  * is_palindrome - checks if a singly linked list is a palindrome
@@ -29,43 +9,53 @@ listint_t *reverse_list(listint_t *head)
  */
 int is_palindrome(listint_t **head)
 {
-    listint_t *slow = *head, *fast = *head;
-    listint_t *second_half, *first_half, *reversed;
-    int result = 1;
+    int *values;
+    int i, len;
+    listint_t *current;
 
-    if (!head || !*head || !(*head)->next)
+    if (head == NULL || *head == NULL)
         return (1);
 
-    // Find the middle of the list
-    while (fast && fast->next)
+    len = listint_len(*head);
+    values = malloc(sizeof(int) * len);
+    if (values == NULL)
+        return (0);
+
+    current = *head;
+    for (i = 0; i < len; i++)
     {
-        slow = slow->next;
-        fast = fast->next->next;
+        values[i] = current->n;
+        current = current->next;
     }
 
-    // If the list has odd number of elements, skip the middle one
-    if (fast)
-        slow = slow->next;
-
-    // Reverse the second half
-    reversed = reverse_list(slow);
-    second_half = reversed;
-    first_half = *head;
-
-    // Compare the two halves
-    while (second_half)
+    for (i = 0; i < len / 2; i++)
     {
-        if (first_half->n != second_half->n)
+        if (values[i] != values[len - 1 - i])
         {
-            result = 0;
-            break;
+            free(values);
+            return (0);
         }
-        first_half = first_half->next;
-        second_half = second_half->next;
     }
 
-    // Restore the original list (optional but good practice)
-    reverse_list(reversed);
+    free(values);
+    return (1);
+}
 
-    return (result);
+/**
+ * listint_len - counts the number of elements in a linked list
+ * @h: head of the list
+ *
+ * Return: number of elements
+ */
+size_t listint_len(const listint_t *h)
+{
+    int length = 0;
+
+    while (h != NULL)
+    {
+        length++;
+        h = h->next;
+    }
+
+    return (length);
 }
